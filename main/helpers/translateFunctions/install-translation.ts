@@ -30,7 +30,7 @@ export default async function installTranslation(localization) {
 
   const response = await axios.get(url);
 
-  fs.writeFileSync(outputPath, response.data);
+  fs.writeFileSync(outputPath, "\ufeff"+response.data);
 
   return true;
 }
