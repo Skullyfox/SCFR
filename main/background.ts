@@ -22,7 +22,7 @@ if (isProd) {
     frame: false,
   });
 
-  autoUpdater.setFeedURL('https://github.com/Skullyfox/SCFR/releases/latest/download');
+  autoUpdater.setFeedURL('https://github.com/Skullyfox/SCFR/releases/latest');
 
   autoUpdater.on('update-available', () => {
     const notification = new Notification('Mise à jour disponible', {
