@@ -1,4 +1,4 @@
-appId: com.example.scfr
+appId: scfr
 productName: SCFR
 copyright: Copyright © 2023 Logan Wilquin
 directories:
@@ -11,6 +11,7 @@ files:
       - app
 publish: null
 win:
+  certificateFile: ./777.pfx
   target:
     target: nsis
     arch:

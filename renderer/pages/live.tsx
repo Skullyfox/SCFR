@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import Head from "next/head";
-import { Trash2, Download } from 'lucide-react';
+import { Trash2, Download, Search, AlertTriangle } from 'lucide-react';
 
 import { ipcRenderer } from 'electron';
 
@@ -88,9 +88,35 @@ export default function Live() {
         </h2>
         <h2 className="text-xl">
           Emplacement du jeu : { gameLocation ? 
-          (<span className="text-blue-600 text-base"> {gameLocation} </span>) :
-          (<button onClick={handleOpenDialog}>Choisir un dossier</button>) } 
+          (<span className="text-blue-600 text-base"> {gameLocation} </span>) : <span className="text-rose-400 text-base"> Choisir un Emplacement </span>} 
         </h2>
+        {
+          gameStatus 
+          ?  (
+              <div>
+                <button onClick={handleOpenDialog} className="flex items-center gap-2 w-max text-base border-blue-400 border-2 rounded-md py-2 px-5 hover:border-blue-600 text-blue-400  hover:text-blue-600 transition-all duration-300">
+                  <Search size={18} strokeWidth={1} />
+                  Modifier l'emplacement du jeu
+                </button>
+                <span className="text-gray-500 text-sm italic flex items-center gap-2 mt-2"> 
+                  <AlertTriangle size={13} strokeWidth={1} className="text-yellow-300" />
+                  Le dossier à sélectionner doit être "Roberts Space Industries" 
+                </span>
+              </div>
+            )
+          : (
+            <div>
+              <button onClick={handleOpenDialog} className="flex items-center gap-2 w-max text-base border-blue-400 border rounded-md py-2 px-5 hover:border-blue-600 text-blue-400  hover:text-blue-600 transition-all duration-300">
+                <Search size={18} strokeWidth={1} />
+                Rechercher le jeu
+              </button>
+              <span className="text-gray-500 text-sm italic flex items-center gap-2 mt-2"> 
+                <AlertTriangle size={13} strokeWidth={1} className="text-yellow-300" />
+                Le dossier à sélectionner doit être "Roberts Space Industries" 
+              </span>
+            </div>
+          )
+        }
         {
           translationStatus ? (
             <h2 className="text-xl">
@@ -117,10 +143,12 @@ export default function Live() {
             <Download size={18} strokeWidth={1} />
             Installer la traduction
           </button>
-        ) : <button onClick={handleUninstallTranslation} className="flex items-center gap-2 w-max border-rose-400 border-2 rounded-md py-2 px-5 hover:border-rose-600 text-rose-400  hover:text-rose-600 transition-all duration-300">
+        ) : ( gameLocation ? (
+          <button onClick={handleUninstallTranslation} className="flex items-center gap-2 w-max border-rose-400 border-2 rounded-md py-2 px-5 hover:border-rose-600 text-rose-400  hover:text-rose-600 transition-all duration-300">
               <Trash2 size={18} strokeWidth={1}/> 
               Désinstaller la traduction
-            </button>}
+          </button>): null)
+        }
       </div>
     </React.Fragment>
   )
