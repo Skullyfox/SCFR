@@ -1,0 +1,49 @@
+{
+  "private": true,
+  "name": "scfr",
+  "description": "Interface d'installation de la traduction de Star Citizen",
+  "version": "1.0.0",
+  "author": "Logan Wilquin <onivoid.tv@gmail.com>",
+  "main": "app/background.js",
+  "homepage": "https://google.com/",
+  "scripts": {
+    "dev": "nextron",
+    "build": "nextron build",
+    "build:linux": "nextron build --linux",
+    "build:all": "nextron build --linux --win",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "repository": "https://https://github.com/Skullyfox/SCFR",
+  "publish": {
+    "provider": "github",
+    "releaseType": "release"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.4.2",
+    "@fortawesome/free-brands-svg-icons": "^6.4.2",
+    "@fortawesome/free-solid-svg-icons": "^6.4.2",
+    "@fortawesome/react-fontawesome": "^0.2.0",
+    "@radix-ui/react-popover": "1.0.6",
+    "axios": "^1.5.1",
+    "cheerio": "^1.0.0-rc.12",
+    "electron-serve": "^1.1.0",
+    "electron-store": "^8.1.0",
+    "electron-updater": "^6.1.4",
+    "fortawesome": "^0.0.1-security",
+    "lucide-react": "^0.265.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.18",
+    "@types/react": "^18.0.26",
+    "autoprefixer": "^10.4.7",
+    "electron": "^21.4.4",
+    "electron-builder": "^23.6.0",
+    "next": "^12.3.4",
+    "nextron": "^8.5.0",
+    "postcss": "^8.4.13",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tailwindcss": "^3.1.8",
+    "typescript": "^4.9.4"
+  }
+}

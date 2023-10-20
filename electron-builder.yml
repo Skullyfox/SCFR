@@ -1,0 +1,23 @@
+appId: com.example.scfr
+productName: SCFR
+copyright: Copyright © 2023 Logan Wilquin
+directories:
+  output: dist
+  buildResources: resources
+files:
+  - from: .
+    filter:
+      - package.json
+      - app
+publish: null
+win:
+  target:
+    target: nsis
+    arch:
+      - x64
+linux:
+  category: Utility
+  target:
+    target: deb
+    arch:
+      - x64
