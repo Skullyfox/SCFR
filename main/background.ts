@@ -4,17 +4,6 @@ import { createWindow, checkGameLocation, installTranslation, checkTranslation, 
 import { ipcMain, dialog, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
 
-autoUpdater.setFeedURL('https://github.com/Skullyfox/SCFR/releases/latest/download');
-
-autoUpdater.on('update-available', () => {
-  const notification = new Notification('Mise à jour disponible', {
-    body: 'Une nouvelle version de votre application est disponible. Voulez-vous la télécharger ?'
-  });
-  notification.onclick = () => {
-    autoUpdater.downloadUpdate();
-  };
-});
-
 const isProd: boolean = process.env.NODE_ENV === 'production';
 
 if (isProd) {
@@ -31,6 +20,17 @@ if (isProd) {
     height: 600,
     resizable: false,
     frame: false,
+  });
+
+  autoUpdater.setFeedURL('https://github.com/Skullyfox/SCFR/releases/latest/download');
+
+  autoUpdater.on('update-available', () => {
+    const notification = new Notification('Mise à jour disponible', {
+      body: 'Une nouvelle version de votre application est disponible. Voulez-vous la télécharger ?'
+    });
+    notification.onclick = () => {
+      autoUpdater.downloadUpdate();
+    };
   });
 
   if (isProd) {
