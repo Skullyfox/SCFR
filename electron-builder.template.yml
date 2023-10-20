@@ -11,8 +11,8 @@ files:
       - app
 publish: null
 win:
-  certificateFile: ./SCFR.pfx
-  certificatePassword: "SCFR-6"
+  certificateFile: xxx
+  certificatePassword: xxx
   target:
     target: nsis
     arch:
