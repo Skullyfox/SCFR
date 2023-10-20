@@ -4,3 +4,4 @@ node_modules
 app
 dist
 *.pfx
+electron-builder.yml
