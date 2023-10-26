@@ -2,18 +2,22 @@
   "private": true,
   "name": "scfr",
   "description": "Interface d'installation de la traduction de Star Citizen",
-  "version": "1.0.1",
+  "version": "1.0.1a",
   "author": "Logan Wilquin <onivoid.tv@gmail.com>",
   "main": "app/background.js",
-  "homepage": "https://google.com/",
+  "homepage": "https://github.com/Skullyfox/SCFR",
   "scripts": {
     "dev": "nextron",
-    "build": "nextron build",
-    "build:linux": "nextron build --linux",
-    "build:all": "nextron build --linux --win",
-    "postinstall": "electron-builder install-app-deps"
+    "prep" : "npm install --save",
+    "build": "nextron build --publish never",
+    "zip": "cross-var powershell.exe Compress-Archive -Path dist\\win-unpacked -Destination dist/SCFR-$npm_package_version.zip",
+    "postinstall": "electron-builder install-app-deps",
+    "release": "cross-var npm install --save && git add . && cross-var git commit -m v$npm_package_version && git push origin master && cross-var git tag v$npm_package_version && cross-var git push origin v$npm_package_version"
   },
-  "repository": "https://https://github.com/Skullyfox/SCFR",
+  "build": {
+    "productName": "SCFR"
+  },
+  "repository": "https://github.com/Skullyfox/SCFR",
   "publish": {
     "provider": "github",
     "releaseType": "release"
@@ -36,6 +40,7 @@
     "@types/node": "^18.11.18",
     "@types/react": "^18.0.26",
     "autoprefixer": "^10.4.7",
+    "cross-var": "^1.1.0",
     "electron": "^21.4.4",
     "electron-builder": "^23.6.0",
     "next": "^12.3.4",
