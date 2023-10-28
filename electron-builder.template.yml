@@ -17,9 +17,3 @@ win:
     target: nsis
     arch:
       - x64
-linux:
-  category: Utility
-  target:
-    target: deb
-    arch:
-      - x64
