@@ -50,6 +50,7 @@ export default function Credits() {
         <hr className="border-blue-600 my-2"/>
         <ul className='grid grid-cols-4 gap-3 my-5'>
           <li className='text-md text-blue-400'>Onivoid</li>
+          <li className='text-md text-blue-400'>Flisher Ofatale</li>
         </ul>
         <h1 className="text-4xl">Contributeurs</h1>
         <hr className="border-blue-600 my-2"/>
