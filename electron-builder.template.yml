@@ -11,6 +11,7 @@ files:
       - app
 publish: null
 win:
+  icon: resources/icon.ico
   certificateFile: xxx
   certificatePassword: xxx
   target:

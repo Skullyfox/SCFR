@@ -11,5 +11,5 @@ export default async function checkTranslationUpToDate(localization) {
   const githubGlobalIniResponse = await axios.get(githubGlobalIniUrl);
   const githubGlobalIni = githubGlobalIniResponse.data;
 
-  return localGlobalIni === githubGlobalIni;
+  return localGlobalIni === "\ufeff"+githubGlobalIni;
 }

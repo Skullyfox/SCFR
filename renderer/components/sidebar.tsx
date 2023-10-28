@@ -1,10 +1,13 @@
 import { Home, Users, BookMinus, Download, Info } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { ipcRenderer } from "electron";
 
 function Sidebar() {
     const [isHovered, setIsHovered] = useState(false);
+    const [version, setVersion] = useState<string | null>(null);
+    const [updateAvailable, setUpdateAvailable] = useState(false);
+    const [updateUrl, setUpdateUrl] = useState<string | null>(null);
 
     const handleDownload = async () => {
         await ipcRenderer.invoke("download-translationFile", {link: "https://raw.githubusercontent.com/SPEED0U/StarCitizenTranslations/main/french_(france)/global.ini"});
@@ -18,6 +21,21 @@ function Sidebar() {
         ipcRenderer.send("contribute");
     };
 
+    const handleUpdate = () => {
+        ipcRenderer.send("updateApplication", {url: updateUrl});
+    };
+
+    useEffect(() => {
+        ipcRenderer.invoke('get-version').then((version: string) => {
+            localStorage.setItem('version', version);
+            setVersion(version);
+            ipcRenderer.invoke("check-for-updates", {version : version}).then(({updateAvailable, url}:{updateAvailable: boolean, url: string}) => {
+                setUpdateAvailable(updateAvailable);
+                setUpdateUrl(url);
+            });
+        });
+    }, []);
+
     return (
         <div
         onMouseEnter={hoverHandler}
@@ -26,7 +44,8 @@ function Sidebar() {
                 hover:w-3/12 transition-all duration-150 
                 hover:items-start
                 hover:px-3
-                flex flex-col items-center justify-center gap-5"
+                flex flex-col items-center justify-center gap-5
+                relative"
         >
         <Link href="/home">
             <div className="flex gap-2 hover:cursor-pointer">
@@ -75,6 +94,20 @@ function Sidebar() {
             <p className="text-slate-50">{isHovered ? "Crédits" : null}</p>
             </div>
         </Link>
+        {
+            updateAvailable ? 
+            <Link href="/home">
+                <div className="flex gap-2 hover:cursor-pointer" onClick={handleUpdate}>
+                    <Download strokeWidth={1} />
+                    <p className="text-slate-50">
+                        {isHovered ? "Mettre à jour l'application" : null}
+                    </p>
+                </div>
+            </Link>
+            : null
+        }
+
+        <p className="text-gray-500 absolute bottom-3 mx-auto">v{version}</p>
         </div>
     );
 }

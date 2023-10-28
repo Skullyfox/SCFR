@@ -1,8 +1,9 @@
 import { app } from 'electron';
 import serve from 'electron-serve';
-import { createWindow, checkGameLocation, installTranslation, checkTranslation, checkTranslationUpToDate, uninstallTranslation, getContributors } from './helpers';
+import { createWindow, checkGameLocation, installTranslation, 
+  checkTranslation, checkTranslationUpToDate, uninstallTranslation, 
+  getContributors, downloadUpdate, checkForUpdates } from './helpers';
 import { ipcMain, dialog, shell } from 'electron';
-import { autoUpdater } from 'electron-updater';
 
 const isProd: boolean = process.env.NODE_ENV === 'production';
 
@@ -20,17 +21,6 @@ if (isProd) {
     height: 600,
     resizable: false,
     frame: false,
-  });
-
-  autoUpdater.setFeedURL('https://github.com/Skullyfox/SCFR/releases/latest');
-
-  autoUpdater.on('update-available', () => {
-    const notification = new Notification('Mise à jour disponible', {
-      body: 'Une nouvelle version de votre application est disponible. Voulez-vous la télécharger ?'
-    });
-    notification.onclick = () => {
-      autoUpdater.downloadUpdate();
-    };
   });
 
   if (isProd) {
@@ -52,7 +42,6 @@ if (isProd) {
   ipcMain.handle("download-translationFile", async (event, {link}: {link: string}) => {
       mainWindow.webContents.downloadURL(`${link}`);
   });
- 
 })();
 
 
@@ -92,8 +81,22 @@ ipcMain.handle('get-platform', () => {
   }
 });
 
+ipcMain.handle('get-version', () => {
+  return app.getVersion();
+});
+
+ipcMain.handle('check-for-updates', async (event, {version}: {version: string}) => {
+  const response = await checkForUpdates(version);
+  console.log(response);
+  return response;
+});
+
 ipcMain.handle('close-app', () => {
   app.quit();
+});
+
+ipcMain.on('updateApplication', async (event, {url}: {url: string}) => {
+  await downloadUpdate(url);
 });
 
 app.on('window-all-closed', () => {

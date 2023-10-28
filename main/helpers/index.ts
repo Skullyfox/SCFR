@@ -5,6 +5,7 @@ import checkTranslation from './translateFunctions/check-translation';
 import checkTranslationUpToDate from './translateFunctions/check-translationUpToDate';
 import uninstallTranslation from './translateFunctions/uninstall-translation';
 import getContributors from './getContributors';
+import { checkForUpdates, downloadUpdate} from './update-handler';
 
 export {
   createWindow,
@@ -14,4 +15,6 @@ export {
   checkTranslationUpToDate,
   uninstallTranslation,
   getContributors,
+  checkForUpdates,
+  downloadUpdate,
 };
