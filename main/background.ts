@@ -52,7 +52,7 @@ if (isProd) {
   ipcMain.handle("download-translationFile", async (event, {link}: {link: string}) => {
       mainWindow.webContents.downloadURL(`${link}`);
   });
-
+ 
 })();
 
 
