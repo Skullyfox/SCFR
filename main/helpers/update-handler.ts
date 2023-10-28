@@ -14,7 +14,7 @@ const checkForUpdates = async (currentVersion: string) => {
   console.log("CURRENT VERSION",currentVersion);
 
   if (latestVersion > currentVersion) {
-    let setupObject = assets.filter(asset => asset.name.endsWith(`-Setup-${latestVersion}.exe`));
+    let setupObject = assets.filter(asset => asset.name.endsWith(`.Setup.${latestVersion}.exe`));
     let downloadUrl = setupObject[0].browser_download_url;
     return {
       "updateAvailable": true,
