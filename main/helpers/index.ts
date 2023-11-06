@@ -6,6 +6,7 @@ import checkTranslationUpToDate from './translateFunctions/check-translationUpTo
 import uninstallTranslation from './translateFunctions/uninstall-translation';
 import getContributors from './getContributors';
 import { checkForUpdates, downloadUpdate} from './update-handler';
+import scanLocations from './scanLocations';
 
 export {
   createWindow,
@@ -17,4 +18,5 @@ export {
   getContributors,
   checkForUpdates,
   downloadUpdate,
+  scanLocations,
 };

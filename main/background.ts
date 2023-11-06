@@ -2,7 +2,7 @@ import { app } from 'electron';
 import serve from 'electron-serve';
 import { createWindow, checkGameLocation, installTranslation, 
   checkTranslation, checkTranslationUpToDate, uninstallTranslation, 
-  getContributors, downloadUpdate, checkForUpdates } from './helpers';
+  getContributors, downloadUpdate, checkForUpdates, scanLocations } from './helpers';
 import { ipcMain, dialog, shell } from 'electron';
 
 const isProd: boolean = process.env.NODE_ENV === 'production';
@@ -89,6 +89,10 @@ ipcMain.handle('check-for-updates', async (event, {version}: {version: string}) 
   const response = await checkForUpdates(version);
   console.log(response);
   return response;
+});
+
+ipcMain.handle('scan-locations', async (event, {executableName, version}: {executableName: string, version: string}) => {
+  return scanLocations(executableName, version);
 });
 
 ipcMain.handle('close-app', () => {

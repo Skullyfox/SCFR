@@ -3,7 +3,6 @@ import path from "path";
 
 export default async function checkTranslation(localization) {
   return new Promise((resolve, reject) => {
-
     const userCfgPath = path.join(localization, "user.cfg");
     const LocalizationDir = path.join(localization, "data", "Localization", "french_(france)");
     const globalIniPath = path.join(LocalizationDir, "global.ini");

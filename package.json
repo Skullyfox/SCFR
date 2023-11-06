@@ -2,13 +2,13 @@
   "private": true,
   "name": "scfr",
   "description": "Interface d'installation de la traduction de Star Citizen",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": "Logan Wilquin <onivoid.tv@gmail.com>",
   "main": "app/background.js",
   "homepage": "https://github.com/Skullyfox/SCFR",
   "scripts": {
     "dev": "nextron",
-    "prep" : "npm install --save",
+    "prep": "npm install --save",
     "build": "nextron build --publish never",
     "zip": "cross-var powershell.exe Compress-Archive -Path dist\\win-unpacked -Destination dist/SCFR-$npm_package_version.zip",
     "postinstall": "electron-builder install-app-deps",
@@ -35,6 +35,7 @@
     "electron-store": "^8.1.0",
     "electron-updater": "^6.1.4",
     "fortawesome": "^0.0.1-security",
+    "glob": "^10.3.10",
     "lucide-react": "^0.265.0"
   },
   "devDependencies": {

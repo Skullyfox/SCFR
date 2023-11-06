@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import Head from "next/head";
 import { Trash2, Download, Search, AlertTriangle } from 'lucide-react';
+import ScanLoading from "../components/scanLoading";
 
 import { ipcRenderer } from 'electron';
 
@@ -9,23 +10,24 @@ export default function Live() {
   const [gameLocation, setGameLocation] = useState<string | null>(null);
   const [translationStatus, setTranslationStatus] = useState<boolean>(false);
   const [translationUpToDate, setTranslationUpToDate] = useState<boolean>(false);
+  const [scanStatus, setScanStatus] = useState<boolean>(true);
 
-  const livePathPrefix = 'StarCitizen/LIVE';
+  const livePathPrefix = 'StarCitizen\\LIVE';
 
   const handleOpenDialog = () => {
     ipcRenderer.invoke('open-gameLocation-dialog').then((res) => {
       localStorage.setItem('registeredGameLocation', `${res}/`);
       setGameLocation(`${res}/`);
       setGameStatus(true);
-      ipcRenderer.invoke('check-translation', {path: `${res}/${livePathPrefix}`}).then((res) => {
+      ipcRenderer.invoke('check-translation', {path: `${res}\\${livePathPrefix}`}).then((res) => {
         setTranslationStatus(res);
       });
     });
   };
 
   const handleInstallTranslation = () => {
-    ipcRenderer.invoke('install-translation', {path: `${gameLocation}${livePathPrefix}`}).then((res) => {
-      ipcRenderer.invoke('check-translation', {path: `${gameLocation}${livePathPrefix}`}).then((res) => {
+    ipcRenderer.invoke('install-translation', {path: `${gameLocation}\\${livePathPrefix}`}).then((res) => {
+      ipcRenderer.invoke('check-translation', {path: `${gameLocation}\\${livePathPrefix}`}).then((res) => {
         setTranslationStatus(res);
       });
       setTranslationUpToDate(true);
@@ -33,8 +35,8 @@ export default function Live() {
   };
 
   const handleUninstallTranslation = () => {
-    ipcRenderer.invoke('uninstall-translation', {path: `${gameLocation}${livePathPrefix}`}).then((res) => {
-      ipcRenderer.invoke('check-translation', {path: `${gameLocation}${livePathPrefix}`}).then((res) => {
+    ipcRenderer.invoke('uninstall-translation', {path: `${gameLocation}\\${livePathPrefix}`}).then((res) => {
+      ipcRenderer.invoke('check-translation', {path: `${gameLocation}\\${livePathPrefix}`}).then((res) => {
         setTranslationStatus(res);
       });
       setTranslationUpToDate(false);
@@ -43,28 +45,29 @@ export default function Live() {
   
   useEffect(() => {
     const registeredGameLocation = localStorage.getItem('registeredGameLocation');
-
     if (registeredGameLocation !== undefined) {
-      ipcRenderer.invoke('check-gameLocation', {path: registeredGameLocation}).then(({path, status}) => {
-        setGameLocation(path);
-        setGameStatus(status);
-        ipcRenderer.invoke('check-translation', {path: `${path}${livePathPrefix}`}).then((res) => {
+      ipcRenderer.invoke('scan-locations', {executableName: "StarCitizen.exe", version: "LIVE"}).then(({gamePath}:{gamePath: string}) => {
+        setGameLocation(gamePath);
+        setGameStatus(true);
+        setScanStatus(false);
+        ipcRenderer.invoke('check-translation', {path: `${gamePath}\\${livePathPrefix}`}).then((res) => {
           setTranslationStatus(res);
           if(res) {
-            ipcRenderer.invoke('check-translationUpToDate', {path: `${path}${livePathPrefix}`}).then((res) => {
+            ipcRenderer.invoke('check-translationUpToDate', {path: `${gamePath}\\${livePathPrefix}`}).then((res) => {
               setTranslationUpToDate(res);
             });
           }
         });
       });
     } else {
-      ipcRenderer.invoke('check-gameLocation').then(({path, status}) => {
-        setGameLocation(path);
-        setGameStatus(status);
-        ipcRenderer.invoke('check-translation', {path: `${path}${livePathPrefix}`}).then((res) => {
+      ipcRenderer.invoke('scan-locations', {executableName: "StarCitizen.exe", version: "LIVE"}).then(({gamePath}:{gamePath: string}) =>  {
+        setGameLocation(gamePath);
+        setGameStatus(true);
+        setScanStatus(false);
+        ipcRenderer.invoke('check-translation', {path: `${gamePath}\\${livePathPrefix}`}).then((res) => {
           setTranslationStatus(res);
           if(res) {
-            ipcRenderer.invoke('check-translationUpToDate', {path: `${path}${livePathPrefix}`}).then((res) => {
+            ipcRenderer.invoke('check-translationUpToDate', {path: `${gamePath}\\${livePathPrefix}`}).then((res) => {
               setTranslationUpToDate(res);
             });
           }
@@ -73,7 +76,7 @@ export default function Live() {
     }
   }, []);
 
-  return (
+  return scanStatus ? <ScanLoading /> : (
     <React.Fragment>
       <Head>
         <title>SCFR | Traduction Live</title>
