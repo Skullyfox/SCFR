@@ -2,10 +2,11 @@ import { app } from 'electron';
 import serve from 'electron-serve';
 import { createWindow, checkGameLocation, installTranslation, 
   checkTranslation, checkTranslationUpToDate, uninstallTranslation, 
-  getContributors, downloadUpdate, checkForUpdates, scanLocations } from './helpers';
+  getContributors, downloadUpdate, checkForUpdates, scanOne, scanAll, scanDisks, createDB, updateUserPreferences, UserPreferences, getUserPreferences } from './helpers';
 import { ipcMain, dialog, shell } from 'electron';
 
 const isProd: boolean = process.env.NODE_ENV === 'production';
+let db;
 
 if (isProd) {
   serve({ directory: 'app' });
@@ -15,11 +16,12 @@ if (isProd) {
 
 (async () => {
   await app.whenReady();
-
+  await createDB();
+  
   const mainWindow = createWindow('main', {
-    width: 1000,
-    height: 600,
-    resizable: false,
+    minWidth: 1152,
+    minHeight: 648,
+    resizable:true,
     frame: false,
   });
 
@@ -91,12 +93,54 @@ ipcMain.handle('check-for-updates', async (event, {version}: {version: string}) 
   return response;
 });
 
-ipcMain.handle('scan-locations', async (event, {executableName, version}: {executableName: string, version: string}) => {
-  return scanLocations(executableName, version);
+ipcMain.on('game-found', (event, {gamePath}: {gamePath: string}) => {
+  event.reply('game-found-reply', {gamePath});
+});
+
+ipcMain.handle('scan-disks', async () => {
+  return scanDisks();
+});
+
+ipcMain.handle('scan-one', async (event, {executableName, version, drive}: {executableName: string, version: string, drive: string}) => {
+  return scanOne(executableName, version, drive);
+});
+
+ipcMain.handle('scan-all', async (event, {executableName, version, drive}: {executableName: string, version: string, drive: string}) => {
+  return scanAll(executableName, version);
 });
 
 ipcMain.handle('close-app', () => {
   app.quit();
+});
+
+ipcMain.on('registerPath', async (event, {gamePath, version}: {gamePath: string, version: string}) => {
+  getUserPreferences(async (err, row) => {
+    if (!err && row){
+      const data = new UserPreferences(
+        1,
+        version === 'LIVE' ? gamePath: row.GamePathLive,
+        version === 'PTU' ? gamePath: row.GamePathPtu,
+        version === 'EPTU' ? gamePath: row.GamePathEptu,
+        version === 'TECH-PREVIEW' ? gamePath: row.GamePathTechPreview,
+        new Date(),
+        {},
+      );
+    
+      await updateUserPreferences(data);
+    }
+  });
+});
+
+ipcMain.handle('get-user-preferences', async () => {
+  return new Promise((resolve, reject) => {
+    getUserPreferences((err, row) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(row);
+      }
+    });
+  });
 });
 
 ipcMain.on('updateApplication', async (event, {url}: {url: string}) => {

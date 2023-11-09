@@ -5,29 +5,29 @@ import ScanLoading from "../components/scanLoading";
 
 import { ipcRenderer } from 'electron';
 
-export default function Live() {
+export default function TechPreview() {
   const [gameStatus, setGameStatus] = useState<boolean>(false);
   const [gameLocation, setGameLocation] = useState<string | null>(null);
   const [translationStatus, setTranslationStatus] = useState<boolean>(false);
   const [translationUpToDate, setTranslationUpToDate] = useState<boolean>(false);
   const [scanStatus, setScanStatus] = useState<boolean>(true);
 
-  const livePathPrefix = 'StarCitizen\\LIVE';
+  const techpreviewPathPrefix = 'StarCitizen\\TECH-PREVIEW';
 
   const handleOpenDialog = () => {
     ipcRenderer.invoke('open-gameLocation-dialog').then((res) => {
       localStorage.setItem('registeredGameLocation', `${res}/`);
       setGameLocation(`${res}/`);
       setGameStatus(true);
-      ipcRenderer.invoke('check-translation', {path: `${res}\\${livePathPrefix}`}).then((res) => {
+      ipcRenderer.invoke('check-translation', {path: `${res}\\${techpreviewPathPrefix}`}).then((res) => {
         setTranslationStatus(res);
       });
     });
   };
 
   const handleInstallTranslation = () => {
-    ipcRenderer.invoke('install-translation', {path: `${gameLocation}\\${livePathPrefix}`}).then((res) => {
-      ipcRenderer.invoke('check-translation', {path: `${gameLocation}\\${livePathPrefix}`}).then((res) => {
+    ipcRenderer.invoke('install-translation', {path: `${gameLocation}\\${techpreviewPathPrefix}`}).then((res) => {
+      ipcRenderer.invoke('check-translation', {path: `${gameLocation}\\${techpreviewPathPrefix}`}).then((res) => {
         setTranslationStatus(res);
       });
       setTranslationUpToDate(true);
@@ -35,8 +35,8 @@ export default function Live() {
   };
 
   const handleUninstallTranslation = () => {
-    ipcRenderer.invoke('uninstall-translation', {path: `${gameLocation}\\${livePathPrefix}`}).then((res) => {
-      ipcRenderer.invoke('check-translation', {path: `${gameLocation}\\${livePathPrefix}`}).then((res) => {
+    ipcRenderer.invoke('uninstall-translation', {path: `${gameLocation}\\${techpreviewPathPrefix}`}).then((res) => {
+      ipcRenderer.invoke('check-translation', {path: `${gameLocation}\\${techpreviewPathPrefix}`}).then((res) => {
         setTranslationUpToDate(false);
         setTranslationStatus(false);
       });
@@ -45,25 +45,25 @@ export default function Live() {
   
   useEffect(() => {
     ipcRenderer.invoke('get-user-preferences').then((row) => {
-      if(row && row.GamePathLive !== null){
-        ipcRenderer.invoke('check-translation', {path: `${row.GamePathLive}\\${livePathPrefix}`}).then(async (res) => {
+      if(row && row.GamePathTechPreview !== null){
+        ipcRenderer.invoke('check-translation', {path: `${row.GamePathTechPreview}\\${techpreviewPathPrefix}`}).then(async (res) => {
           setTranslationStatus(res);
           if(res) {
-            await ipcRenderer.invoke('check-translationUpToDate', {path: `${row.GamePathLive}\\${livePathPrefix}`}).then((res) => {
+            await ipcRenderer.invoke('check-translationUpToDate', {path: `${row.GamePathTechPreview}\\${techpreviewPathPrefix}`}).then((res) => {
               setTranslationUpToDate(res);
             });
           }
         });
         setScanStatus(false);
-        setGameLocation(row.GamePathLive);
+        setGameLocation(row.GamePathTechPreview);
         setGameStatus(true);
       }
     });
     ipcRenderer.on('game-found-reply', (event, arg) => {
-      ipcRenderer.invoke('check-translation', {path: `${arg.gamePath}\\${livePathPrefix}`}).then(async (res) => {
+      ipcRenderer.invoke('check-translation', {path: `${arg.gamePath}\\${techpreviewPathPrefix}`}).then(async (res) => {
         setTranslationStatus(res);
         if(res) {
-          await ipcRenderer.invoke('check-translationUpToDate', {path: `${arg.gamePath}\\${livePathPrefix}`}).then((res) => {
+          await ipcRenderer.invoke('check-translationUpToDate', {path: `${arg.gamePath}\\${techpreviewPathPrefix}`}).then((res) => {
             setTranslationUpToDate(res);
           });
         }
@@ -74,13 +74,13 @@ export default function Live() {
     });
   }, []);
 
-  return scanStatus ? <ScanLoading version="LIVE" /> : (
+  return scanStatus ? <ScanLoading version="TECH-PREVIEW" /> : (
     <React.Fragment>
       <Head>
-        <title>SCFR | Traduction Live</title>
+        <title>SCFR | Traduction Tech-Preview</title>
       </Head>
       <div className='container p-5 w-full pt-20 flex flex-col gap-5'>
-        <h1 className="text-4xl">StarCitizen FR - Traduction Live</h1>
+        <h1 className="text-4xl">StarCitizen FR - Traduction Tech-Preview</h1>
         <hr className="border-blue-600"/>
         <h2 className="text-xl">
           Statut du jeu : { gameStatus ? 

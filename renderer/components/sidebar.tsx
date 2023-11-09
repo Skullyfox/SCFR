@@ -70,6 +70,20 @@ function Sidebar() {
             </div>
         </Link>
 
+        <Link href="/eptu">
+            <div className="flex gap-2 hover:cursor-pointer">
+            <BookMinus strokeWidth={1} />
+            <p className="text-slate-50">{isHovered ? "Traduction EPTU" : null}</p>
+            </div>
+        </Link>
+
+        <Link href="/tech-preview">
+            <div className="flex gap-2 hover:cursor-pointer">
+            <BookMinus strokeWidth={1} />
+            <p className="text-slate-50">{isHovered ? "Traduction TECH-PREVIEW" : null}</p>
+            </div>
+        </Link>
+
         <Link href="/home">
             <div className="flex gap-2 hover:cursor-pointer" onClick={handleDownload}>
                 <Download strokeWidth={1} />

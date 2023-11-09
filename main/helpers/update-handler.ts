@@ -10,8 +10,6 @@ const checkForUpdates = async (currentVersion: string) => {
   const { tag_name } = response.data;
   const { assets } = response.data;
   const latestVersion = tag_name.substring(1);
-  console.log("LATEST VERSION",latestVersion);
-  console.log("CURRENT VERSION",currentVersion);
 
   if (latestVersion > currentVersion) {
     let setupObject = assets.filter(asset => asset.name.endsWith(`.Setup.${latestVersion}.exe`));

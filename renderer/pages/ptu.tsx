@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import Head from "next/head";
-import { Trash2, Download } from 'lucide-react';
+import { Trash2, Download, Search, AlertTriangle } from 'lucide-react';
 import ScanLoading from "../components/scanLoading";
 
 import { ipcRenderer } from 'electron';
@@ -12,22 +12,22 @@ export default function Ptu() {
   const [translationUpToDate, setTranslationUpToDate] = useState<boolean>(false);
   const [scanStatus, setScanStatus] = useState<boolean>(true);
 
-  const livePathPrefix = 'StarCitizen\\PTU';
+  const ptuPathPrefix = 'StarCitizen\\PTU';
 
   const handleOpenDialog = () => {
     ipcRenderer.invoke('open-gameLocation-dialog').then((res) => {
       localStorage.setItem('registeredGameLocation', `${res}/`);
       setGameLocation(`${res}/`);
       setGameStatus(true);
-      ipcRenderer.invoke('check-translation', {path: `${res}\\${livePathPrefix}`}).then((res) => {
+      ipcRenderer.invoke('check-translation', {path: `${res}\\${ptuPathPrefix}`}).then((res) => {
         setTranslationStatus(res);
       });
     });
   };
 
   const handleInstallTranslation = () => {
-    ipcRenderer.invoke('install-translation', {path: `${gameLocation}\\${livePathPrefix}`}).then((res) => {
-      ipcRenderer.invoke('check-translation', {path: `${gameLocation}\\${livePathPrefix}`}).then((res) => {
+    ipcRenderer.invoke('install-translation', {path: `${gameLocation}\\${ptuPathPrefix}`}).then((res) => {
+      ipcRenderer.invoke('check-translation', {path: `${gameLocation}\\${ptuPathPrefix}`}).then((res) => {
         setTranslationStatus(res);
       });
       setTranslationUpToDate(true);
@@ -35,48 +35,46 @@ export default function Ptu() {
   };
 
   const handleUninstallTranslation = () => {
-    ipcRenderer.invoke('uninstall-translation', {path: `${gameLocation}\\${livePathPrefix}`}).then((res) => {
-      ipcRenderer.invoke('check-translation', {path: `${gameLocation}\\${livePathPrefix}`}).then((res) => {
-        setTranslationStatus(res);
+    ipcRenderer.invoke('uninstall-translation', {path: `${gameLocation}\\${ptuPathPrefix}`}).then((res) => {
+      ipcRenderer.invoke('check-translation', {path: `${gameLocation}\\${ptuPathPrefix}`}).then((res) => {
+        setTranslationUpToDate(false);
+        setTranslationStatus(false);
       });
-      setTranslationUpToDate(false);
     });
   };
   
   useEffect(() => {
-    const registeredGameLocation = localStorage.getItem('registeredGameLocation')
-    if (registeredGameLocation !== undefined) {
-      ipcRenderer.invoke('scan-locations', {executableName: "StarCitizen.exe", version: "PTU"}).then(({gamePath}:{gamePath: string}) => {
-        setGameLocation(gamePath);
-        setGameStatus(true);
-        setScanStatus(false);
-        ipcRenderer.invoke('check-translation', {path: `${gamePath}\\${livePathPrefix}`}).then((res) => {
+    ipcRenderer.invoke('get-user-preferences').then((row) => {
+      if(row && row.GamePathPtu !== null){
+        ipcRenderer.invoke('check-translation', {path: `${row.GamePathPtu}\\${ptuPathPrefix}`}).then(async (res) => {
           setTranslationStatus(res);
           if(res) {
-            ipcRenderer.invoke('check-translationUpToDate', {path: `${gamePath}\\${livePathPrefix}`}).then((res) => {
+            await ipcRenderer.invoke('check-translationUpToDate', {path: `${row.GamePathPtu}\\${ptuPathPrefix}`}).then((res) => {
               setTranslationUpToDate(res);
             });
           }
         });
-      });
-    } else {
-      ipcRenderer.invoke('scan-locations', {executableName: "StarCitizen.exe", version: "PTU"}).then(({gamePath}:{gamePath: string}) =>  {
-        setGameLocation(gamePath);
-        setGameStatus(true);
         setScanStatus(false);
-        ipcRenderer.invoke('check-translation', {path: `${gamePath}\\${livePathPrefix}`}).then((res) => {
-          setTranslationStatus(res);
-          if(res) {
-            ipcRenderer.invoke('check-translationUpToDate', {path: `${gamePath}\\${livePathPrefix}`}).then((res) => {
-              setTranslationUpToDate(res);
-            });
-          }
-        });
+        setGameLocation(row.GamePathPtu);
+        setGameStatus(true);
+      }
+    });
+    ipcRenderer.on('game-found-reply', (event, arg) => {
+      ipcRenderer.invoke('check-translation', {path: `${arg.gamePath}\\${ptuPathPrefix}`}).then(async (res) => {
+        setTranslationStatus(res);
+        if(res) {
+          await ipcRenderer.invoke('check-translationUpToDate', {path: `${arg.gamePath}\\${ptuPathPrefix}`}).then((res) => {
+            setTranslationUpToDate(res);
+          });
+        }
+        setScanStatus(false);
+        setGameLocation(arg.gamePath);
+        setGameStatus(true);
       });
-    }
+    });
   }, []);
 
-  return scanStatus ? <ScanLoading /> : (
+  return scanStatus ? <ScanLoading version="PTU"/> : (
     <React.Fragment>
       <Head>
         <title>SCFR | Traduction PTU</title>
@@ -94,6 +92,33 @@ export default function Ptu() {
           (<span className="text-blue-600 text-base"> {gameLocation} </span>) :
           (<button onClick={handleOpenDialog}>Choisir un dossier</button>) } 
         </h2>
+        {
+          gameStatus 
+          ?  (
+              <div>
+                <button onClick={handleOpenDialog} className="flex items-center gap-2 w-max text-base border-blue-400 border-2 rounded-md py-2 px-5 hover:border-blue-600 text-blue-400  hover:text-blue-600 transition-all duration-300">
+                  <Search size={18} strokeWidth={1} />
+                  Modifier l'emplacement du jeu
+                </button>
+                <span className="text-gray-500 text-sm italic flex items-center gap-2 mt-2"> 
+                  <AlertTriangle size={13} strokeWidth={1} className="text-yellow-300" />
+                  Le dossier à sélectionner doit être "Roberts Space Industries" 
+                </span>
+              </div>
+            )
+          : (
+            <div>
+              <button onClick={handleOpenDialog} className="flex items-center gap-2 w-max text-base border-blue-400 border rounded-md py-2 px-5 hover:border-blue-600 text-blue-400  hover:text-blue-600 transition-all duration-300">
+                <Search size={18} strokeWidth={1} />
+                Rechercher le jeu
+              </button>
+              <span className="text-gray-500 text-sm italic flex items-center gap-2 mt-2"> 
+                <AlertTriangle size={13} strokeWidth={1} className="text-yellow-300" />
+                Le dossier à sélectionner doit être "Roberts Space Industries" 
+              </span>
+            </div>
+          )
+        }
         {
           translationStatus ? (
             <h2 className="text-xl">

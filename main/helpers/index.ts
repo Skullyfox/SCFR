@@ -6,7 +6,10 @@ import checkTranslationUpToDate from './translateFunctions/check-translationUpTo
 import uninstallTranslation from './translateFunctions/uninstall-translation';
 import getContributors from './getContributors';
 import { checkForUpdates, downloadUpdate} from './update-handler';
-import scanLocations from './scanLocations';
+import {scanOne, scanAll} from './scanLocations';
+import scanDisks from './scanDisks';
+import { createDB, updateUserPreferences, getUserPreferences } from './database/functions';
+import UserPreferences from './database/UserPreferences';
 
 export {
   createWindow,
@@ -18,5 +21,11 @@ export {
   getContributors,
   checkForUpdates,
   downloadUpdate,
-  scanLocations,
+  scanAll,
+  scanOne,
+  scanDisks,
+  createDB,
+  updateUserPreferences,
+  getUserPreferences,
+  UserPreferences
 };
