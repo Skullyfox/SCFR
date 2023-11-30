@@ -27,7 +27,7 @@ export default function Credits() {
 
   useEffect(() => {
     ipcRenderer.invoke("getContributors").then((res) => {
-      console.log(res)
+      //console.log(res)
       setContributors(res);
     });
   }, []);
@@ -51,6 +51,7 @@ export default function Credits() {
         <ul className='grid grid-cols-4 gap-3 my-5'>
           <li className='text-md text-blue-400'>Onivoid</li>
           <li className='text-md text-blue-400'>Flisher Ofatale</li>
+          <li className='text-md text-blue-400'>dalil01</li>
         </ul>
         <h1 className="text-4xl">Contributeurs</h1>
         <hr className="border-blue-600 my-2"/>
