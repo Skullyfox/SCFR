@@ -9,7 +9,7 @@ export default function TechPreview() {
   const [gameStatus, setGameStatus] = useState<boolean>(false);
   const [gameLocation, setGameLocation] = useState<string | null>(null);
   const [translationStatus, setTranslationStatus] = useState<boolean>(false);
-  const [translationUpToDate, setTranslationUpToDate] = useState<boolean>(false);
+  const [translationUpToDate, setTranslationUpToDate] = useState<boolean>(true);
   const [scanStatus, setScanStatus] = useState<boolean>(true);
 
   const techpreviewPathPrefix = 'StarCitizen\\TECH-PREVIEW';
