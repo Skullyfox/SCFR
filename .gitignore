@@ -5,3 +5,4 @@ app
 dist
 *.pfx
 electron-builder.yml
+.idea
